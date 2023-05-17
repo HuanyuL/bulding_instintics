@@ -21,8 +21,8 @@ class Capture:
         self.rate = rospy.Rate(10)
 
     def run(self):
-        if self.cap.isOpened():
-            rospy.loginfo("Webcam opened")
+        if not self.cap.isOpened():
+            rospy.loginfo("no camera detected")
         else:
             rospy.loginfo("Publishing images")
             while not rospy.is_shutdown():
@@ -46,7 +46,6 @@ class Capture:
                     rospy.logerr(e)
                     break
             self.on_shutdown()
-        return frame
 
     def on_shutdown(self):
         self.cap.release()
