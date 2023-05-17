@@ -5,7 +5,7 @@ Install ROS-melodic by following this page [ROS installation](http://wiki.ros.or
 ## turtle_ws
 Create turtle_ws and clone this repository to ``src``  
 ```
-git clone https://github.com/HuanyuL/bulding_instintics
+git clone https://github.com/HuanyuL/bulding_instintics .
 ```  
 Install all the dependencies for packages
 ```
