@@ -8,3 +8,9 @@ Create turtle_ws and clone this repository to ``src``
 git clone https://github.com/HuanyuL/bulding_instintics
 ```  
 Install all the dependencies for packages
+```
+rosdep install --from-paths src --ignore-src -r -y
+catkin build
+```
+## Important information  
+usb-pc connection cable has to connect to fast charge socket
