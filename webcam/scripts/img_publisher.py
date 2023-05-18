@@ -7,7 +7,7 @@ import rospy
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
 from cv_bridge import CvBridge, CvBridgeError
-
+from std_msgs.msg import Float64MultiArray
 
 class Capture:
 
@@ -15,7 +15,8 @@ class Capture:
 
         # self.vec_pub = rospy.Publisher("/cmd_vel_mux/input/teleop", Twist, queue_size=1)
         self.crop_img = rospy.Publisher("/crop_img", Image, queue_size=1)
-        self.resize_img = rospy.Publisher("/resize_img", Image, queue_size=1)
+        self.resize_img = rospy.Publisher("/turtle_view", Image, queue_size=1)
+        self.rgb_msg = rospy.Publisher("/view", Float64MultiArray, queue_size=1)
         self.bridge = CvBridge()
         self.cap = cv2.VideoCapture(0)
         self.rate = rospy.Rate(10)
@@ -31,7 +32,7 @@ class Capture:
                     rospy.logerr("Failed to capture frame")
                     continue
                 try:
-                    crop, resize = self.analyse_frame(frame)
+                    crop, resize, flattened = self.analyse_frame(frame)
                     crop_msg = self.bridge.cv2_to_imgmsg(crop, "bgr8")
                     resize_msg = self.bridge.cv2_to_imgmsg(resize, "bgr8")
                     # twist = Twist()
@@ -40,6 +41,7 @@ class Capture:
                     # self.vec_pub.publish(twist)
                     self.crop_img.publish(crop_msg)
                     self.resize_img.publish(resize_msg)
+                    self.rgb_msg.publish(flattened)
                     self.rate.sleep()
                 except CvBridgeError as e:
                     self.on_shutdown()
@@ -79,7 +81,7 @@ class Capture:
 
         # crop the image
         row_num = 2
-        col_num = 8
+        col_num = 4
         low_x = 150
         aspect_ratio = row_num/col_num
         high_x = low_x + (aspect_ratio * height)
@@ -102,8 +104,13 @@ class Capture:
         # assemble the cells into a 2d array
         cell_colors = np.array(cell_colors)
         cell_colors = cell_colors.reshape((row_num, col_num, 3))
+        
+        # use list conprehension to divide by 255
+        flattened = cell_colors.flatten()
+        flattened = [x/255 for x in flattened]
 
-        return crop, cell_colors
+
+        return crop, cell_colors, flattened
 
 
 def main():
