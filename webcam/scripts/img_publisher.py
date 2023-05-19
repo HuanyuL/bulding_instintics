@@ -7,7 +7,8 @@ import rospy
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
 from cv_bridge import CvBridge, CvBridgeError
-from webcam.msg import View
+from std_msgs.msg import Float64MultiArray
+
 
 class Capture:
 
@@ -16,7 +17,7 @@ class Capture:
         # self.vec_pub = rospy.Publisher("/cmd_vel_mux/input/teleop", Twist, queue_size=1)
         self.crop_img = rospy.Publisher("/crop_img", Image, queue_size=1)
         self.resize_img = rospy.Publisher("/turtle_view", Image, queue_size=1)
-        self.rgb_msg = rospy.Publisher("/view", View, queue_size=1)
+        self.rgb_msg = rospy.Publisher("/view", Float64MultiArray, queue_size=1)
         self.bridge = CvBridge()
         self.cap = cv2.VideoCapture(0)
         self.rate = rospy.Rate(10)
@@ -104,13 +105,18 @@ class Capture:
         # assemble the cells into a 2d array
         cell_colors = np.array(cell_colors)
         cell_colors = cell_colors.reshape((row_num, col_num, 3))
-        
+
         # use list conprehension to divide by 255
-        flattened = cell_colors.flatten()
+        view_msg = Float64MultiArray()
+
+        if cell_colors.ndim > 1:
+            flattened = cell_colors.flatten()
+
+        # Convert the ndarray elements to float and assign to the message data
         flattened = [x/255 for x in flattened]
+        view_msg.data = [float(value) for value in flattened]
 
-
-        return crop, cell_colors, flattened
+        return crop, cell_colors, view_msg
 
 
 def main():

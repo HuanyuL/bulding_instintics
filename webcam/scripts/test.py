@@ -58,8 +58,8 @@ while True:
     cell_colors = cell_colors.reshape((row_num, col_num, 3))
     flattened = cell_colors.flatten()
     # use list conprehension to divide by 255
-    flattened = [x/255 for x in flattened]
-    print(flattened)
+    flattened.data = [x/255 for x in flattened]
+    print(type(flattened))
     # cv2.imshow('view', cell_colors)
     # if cv2.waitKey(3) & 0xFF == ord('q'):
     break
