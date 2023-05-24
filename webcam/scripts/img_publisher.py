@@ -5,7 +5,6 @@ import cv2
 import numpy as np
 import rospy
 from sensor_msgs.msg import Image
-from geometry_msgs.msg import Twist
 from cv_bridge import CvBridge, CvBridgeError
 from std_msgs.msg import Float64MultiArray
 
@@ -14,10 +13,13 @@ class Capture:
 
     def __init__(self):
 
-        # self.vec_pub = rospy.Publisher("/cmd_vel_mux/input/teleop", Twist, queue_size=1)
-        self.crop_img = rospy.Publisher("/crop_img", Image, queue_size=1)
+        # self.vec_pub = rospy.Publisher("/cmd_vel_mux/input/teleop",
+        #  Twist, queue_size=1)
+        self.crop_img = rospy.Publisher("/crop_rgb", Image, queue_size=1)
+        self.img_rgb = rospy.Publisher("img_rgb", Image, queue_size=1)
         self.resize_img = rospy.Publisher("/turtle_view", Image, queue_size=1)
-        self.rgb_msg = rospy.Publisher("/view", Float64MultiArray, queue_size=1)
+        self.rgb_msg = rospy.Publisher(
+            "/view", Float64MultiArray, queue_size=1)
         self.bridge = CvBridge()
         self.cap = cv2.VideoCapture(0)
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
@@ -36,6 +38,7 @@ class Capture:
                     rospy.logerr("Failed to capture frame")
                     break
                 try:
+                    img_rgb = self.bridge.cv2_to_imgmsg(frame, "bgr8")
                     crop, resize, flattened = self.analyse_frame(frame)
                     crop_msg = self.bridge.cv2_to_imgmsg(crop, "bgr8")
                     resize_msg = self.bridge.cv2_to_imgmsg(resize, "bgr8")
@@ -46,6 +49,7 @@ class Capture:
                     self.crop_img.publish(crop_msg)
                     self.resize_img.publish(resize_msg)
                     self.rgb_msg.publish(flattened)
+                    self.img_rgb.publish(img_rgb)
                     self.rate.sleep()
                 except CvBridgeError as e:
                     self.on_shutdown()
