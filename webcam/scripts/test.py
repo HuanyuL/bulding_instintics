@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 np.set_printoptions(threshold=np.inf)
     
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(2)
 
 while True:
     ret, frame = cap.read()
@@ -58,11 +58,11 @@ while True:
     cell_colors = cell_colors.reshape((row_num, col_num, 3))
     flattened = cell_colors.flatten()
     # use list conprehension to divide by 255
-    flattened.data = [x/255 for x in flattened]
-    print(type(flattened))
-    # cv2.imshow('view', cell_colors)
-    # if cv2.waitKey(3) & 0xFF == ord('q'):
-    break
+    # flattened.data = [x/255 for x in flattened]
+    # print(type(flattened))
+    cv2.imshow('view', frame)
+    if cv2.waitKey(3) & 0xFF == ord('q'):
+        break
     
 cap.release()
         

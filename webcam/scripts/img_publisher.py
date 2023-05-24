@@ -20,18 +20,21 @@ class Capture:
         self.rgb_msg = rospy.Publisher("/view", Float64MultiArray, queue_size=1)
         self.bridge = CvBridge()
         self.cap = cv2.VideoCapture(0)
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 360)
         self.rate = rospy.Rate(10)
 
     def run(self):
         if not self.cap.isOpened():
-            rospy.loginfo("no camera detected")
+            rospy.logerr("no camera detected")
+            self.on_shutdown()
         else:
             rospy.loginfo("Publishing images")
             while not rospy.is_shutdown():
                 ret, frame = self.cap.read()
                 if not ret:
                     rospy.logerr("Failed to capture frame")
-                    continue
+                    break
                 try:
                     crop, resize, flattened = self.analyse_frame(frame)
                     crop_msg = self.bridge.cv2_to_imgmsg(crop, "bgr8")
