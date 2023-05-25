@@ -2,7 +2,9 @@ import cv2
 import numpy as np
 np.set_printoptions(threshold=np.inf)
     
-cap = cv2.VideoCapture(2)
+cap = cv2.VideoCapture(0)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 360)
 
 while True:
     ret, frame = cap.read()
@@ -29,15 +31,15 @@ while True:
     mask_combined = cv2.bitwise_or(mask_red, mask_yellow)
 
     # get the size of the image
-    height = frame.shape[0]
+    height, width = frame.shape[0], frame.shape[1]
 
     # crop the image
     row_num = 2
     col_num = 4
-    low_x = 150
+    low_y = 0
     aspect_ratio = row_num/col_num
-    high_x = low_x + (aspect_ratio * height)
-    crop = mask_combined[int(low_x):int(high_x), :]
+    high_y = low_y + (aspect_ratio * width)
+    crop = mask_combined[int(low_y):int(high_y), :]
 
     # split the image in to x rows and y columns
     columns = np.vsplit(crop, row_num)
@@ -60,7 +62,8 @@ while True:
     # use list conprehension to divide by 255
     # flattened.data = [x/255 for x in flattened]
     # print(type(flattened))
-    cv2.imshow('view', frame)
+    cv2.imshow('view', crop)
+    cv2.imshow('view2', cell_colors)
     if cv2.waitKey(3) & 0xFF == ord('q'):
         break
     
