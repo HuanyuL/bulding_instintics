@@ -1,7 +1,7 @@
-import cv2 
+import cv2
 import numpy as np
 np.set_printoptions(threshold=np.inf)
-    
+
 cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 360)
@@ -20,21 +20,29 @@ while True:
     # color detection
     lower_red = np.array([0, 0, 120])
     upper_red = np.array([130, 90, 255])
-    lower_yellow = np.array([0, 137, 180])
-    upper_yellow = np.array([137, 255, 255])
+
+    lower_yellow = np.array([0, 79, 0])
+    upper_yellow = np.array([105, 242, 255])
+
+    lower_blue = np.array([0, 79, 0])
+    upper_blue = np.array([100, 100, 100])
+
     mask_yellow = cv2.inRange(morph, lower_yellow, upper_yellow)
     mask_yellow = cv2.bitwise_and(morph, morph, mask=mask_yellow)
 
     mask_red = cv2.inRange(morph, lower_red, upper_red)
     mask_red = cv2.bitwise_and(morph, morph, mask=mask_red)
 
-    mask_combined = cv2.bitwise_or(mask_red, mask_yellow)
+    mask_blue = cv2.inRange(morph, lower_blue, upper_blue)
+    mask_blue = cv2.bitwise_and(morph, morph, mask=mask_blue)
+
+    mask_combined = cv2.bitwise_or(mask_red, mask_yellow, mask_blue)
 
     # get the size of the image
     height, width = frame.shape[0], frame.shape[1]
 
     # crop the image
-    row_num = 2
+    row_num = 1
     col_num = 4
     low_y = 0
     aspect_ratio = row_num/col_num
@@ -66,6 +74,5 @@ while True:
     cv2.imshow('view2', cell_colors)
     if cv2.waitKey(3) & 0xFF == ord('q'):
         break
-    
+
 cap.release()
-        
