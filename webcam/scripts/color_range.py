@@ -11,15 +11,15 @@ def nothing(x):
 # Create a trackbar window to adjust the HSV values
 # They are preconfigured for a yellow object
 cv2.namedWindow("Tracking")
-cv2.createTrackbar("LH", "Tracking", 0, 255, nothing)
-cv2.createTrackbar("LS", "Tracking", 0, 255, nothing)
-cv2.createTrackbar("LV", "Tracking", 0, 255, nothing)
-cv2.createTrackbar("UH", "Tracking", 255, 255, nothing)
-cv2.createTrackbar("US", "Tracking", 255, 255, nothing)
-cv2.createTrackbar("UV", "Tracking", 255, 255, nothing)
+cv2.createTrackbar("LR", "Tracking", 0, 255, nothing)
+cv2.createTrackbar("LG", "Tracking", 0, 255, nothing)
+cv2.createTrackbar("LB", "Tracking", 0, 255, nothing)
+cv2.createTrackbar("UR", "Tracking", 255, 255, nothing)
+cv2.createTrackbar("UG", "Tracking", 255, 255, nothing)
+cv2.createTrackbar("UB", "Tracking", 255, 255, nothing)
 
 # video capture
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(2)
 
 # Read test image
 while True:
@@ -33,16 +33,16 @@ while True:
     morph = cv2.morphologyEx(blur, cv2.MORPH_OPEN, kernel)
 
     # Read the trackbar values
-    lh = cv2.getTrackbarPos("LH", "Tracking")
-    ls = cv2.getTrackbarPos("LS", "Tracking")
-    lv = cv2.getTrackbarPos("LV", "Tracking")
-    uh = cv2.getTrackbarPos("UH", "Tracking")
-    us = cv2.getTrackbarPos("US", "Tracking")
-    uv = cv2.getTrackbarPos("UV", "Tracking")
+    lR = cv2.getTrackbarPos("LR", "Tracking")
+    lG = cv2.getTrackbarPos("LG", "Tracking")
+    lB = cv2.getTrackbarPos("LB", "Tracking")
+    uR = cv2.getTrackbarPos("UR", "Tracking")
+    uG = cv2.getTrackbarPos("UG", "Tracking")
+    uB = cv2.getTrackbarPos("UB", "Tracking")
 
     # Create arrays to hold the minimum and maximum HSV values
-    hsvMin = np.array([lh, ls, lv])
-    hsvMax = np.array([uh, us, uv])
+    hsvMin = np.array([lR, lG, lB])
+    hsvMax = np.array([uR, uG, uB])
 
     # Apply HSV thresholds
     mask = cv2.inRange(morph, hsvMin, hsvMax)
@@ -52,7 +52,7 @@ while True:
     # mask = cv2.dilate(mask, None, iterations=3)
 
     # The output of the inRange() function is black and white
-    # so we use it as a mask which we AND with the orignal image
+    # so we use it as a mask which we AqND with the orignal image
     res = cv2.bitwise_and(frame, frame, mask=mask)
 
     # Show the result
@@ -60,7 +60,7 @@ while True:
 
     # Wait for the escape key to be pressed
     key = cv2.waitKey(1)
-    if key == 27:
+    if key == 27 or key == ord("q"):
         break
 
 cv2.destroyAllWindows()

@@ -72,25 +72,25 @@ class Capture:
         morph = cv2.morphologyEx(blur, cv2.MORPH_OPEN, kernel)
 
         # color detection
-        lower_red = np.array([0, 0, 120])
-        upper_red = np.array([130, 90, 255])
+        lower_red = np.array([0, 0, 79])
+        upper_red = np.array([65, 51, 255])r
+        
+        lower_green = np.array([0, 72, 0])
+        upper_green = np.array([240, 255, 39])
 
-        lower_yellow = np.array([0, 79, 0])
-        upper_yellow = np.array([105, 242, 255])
+        lower_blue = np.array([225, 141, 0])
+        upper_blue = np.array([255, 201, 255])
 
-        lower_blue = np.array([0, 79, 0])
-        upper_blue = np.array([100, 100, 100])
-
-        mask_yellow = cv2.inRange(morph, lower_yellow, upper_yellow)
-        mask_yellow = cv2.bitwise_and(morph, morph, mask=mask_yellow)
+        mask_green = cv2.inRange(morph, lower_green, upper_green)
 
         mask_red = cv2.inRange(morph, lower_red, upper_red)
-        mask_red = cv2.bitwise_and(morph, morph, mask=mask_red)
 
         mask_blue = cv2.inRange(morph, lower_blue, upper_blue)
-        mask_blue = cv2.bitwise_and(morph, morph, mask=mask_blue)
 
-        mask_combined = cv2.bitwise_or(mask_red, mask_yellow, mask_blue)
+        mask_combined = cv2.bitwise_or(mask_red, mask_blue)
+        mask_combined = cv2.bitwise_or(mask_combined, mask_green)
+        
+        filtered_img = cv2.bitwise_and(morph, morph, mask=mask_combined)
 
         # get the size of the image
         height, width = frame.shape[0], frame.shape[1]
@@ -101,7 +101,7 @@ class Capture:
         low_y = 0
         aspect_ratio = row_num/col_num
         high_y = low_y + (aspect_ratio * width)
-        crop = mask_combined[int(low_y):int(high_y), :]
+        crop = filtered_img[int(low_y):int(high_y), :]
 
         # split the image in to x rows and y columns
         columns = np.vsplit(crop, row_num)
