@@ -56,7 +56,7 @@ class ColorFilter:
                 rospy.loginfo('No frame')
                 rospy.sleep(1)
 
-    def nothing(self,x):
+    def nothing(self, x):
         pass
 
 
