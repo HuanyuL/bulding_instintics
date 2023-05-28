@@ -73,7 +73,7 @@ class Capture:
 
         # color detection
         lower_red = np.array([0, 0, 79])
-        upper_red = np.array([65, 51, 255])r
+        upper_red = np.array([65, 51, 255])
         
         lower_green = np.array([0, 72, 0])
         upper_green = np.array([240, 255, 39])

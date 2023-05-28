@@ -1,15 +1,15 @@
 import cv2
 import numpy as np
 
-# Just dummy function for callbacks from trackbar
 
+
+# Just dummy function for callbacks from trackbar
 
 def nothing(x):
     pass
 
 
-# Create a trackbar window to adjust the HSV values
-# They are preconfigured for a yellow object
+# Create a trackbar window to adjust the RGB values
 cv2.namedWindow("Tracking")
 cv2.createTrackbar("LR", "Tracking", 0, 255, nothing)
 cv2.createTrackbar("LG", "Tracking", 0, 255, nothing)
@@ -19,7 +19,7 @@ cv2.createTrackbar("UG", "Tracking", 255, 255, nothing)
 cv2.createTrackbar("UB", "Tracking", 255, 255, nothing)
 
 # video capture
-cap = cv2.VideoCapture(2)
+cap = cv2.VideoCapture(0)
 
 # Read test image
 while True:
@@ -41,11 +41,11 @@ while True:
     uB = cv2.getTrackbarPos("UB", "Tracking")
 
     # Create arrays to hold the minimum and maximum HSV values
-    hsvMin = np.array([lR, lG, lB])
-    hsvMax = np.array([uR, uG, uB])
+    RGBMin = np.array([lR, lG, lB])
+    RGBMax = np.array([uR, uG, uB])
 
-    # Apply HSV thresholds
-    mask = cv2.inRange(morph, hsvMin, hsvMax)
+    # Apply HSV thresholds  
+    mask = cv2.inRange(morph, RGBMin, RGBMax)
 
     # Uncomment the lines below to see the effect of erode and dilate
     # mask = cv2.erode(mask, None, iterations=3)
