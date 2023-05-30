@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 np.set_printoptions(threshold=np.inf)
 
-cap = cv2.VideoCapture(2)
+cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 360)
 
@@ -65,6 +65,8 @@ while True:
     # assemble the cells into a 2d array
     cell_colors = np.array(cell_colors)
     cell_colors = cell_colors.reshape((row_num, col_num, 3))
+    #reverse the rows
+    cell_colors = cell_colors[::-1]
     flattened = cell_colors.flatten()
     # use list conprehension to divide by 255
     flattened = [x/255 for x in flattened]

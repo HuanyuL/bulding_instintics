@@ -121,11 +121,14 @@ class Capture:
         cell_colors = np.array(cell_colors)
         cell_colors = cell_colors.reshape((row_num, col_num, 3))
 
+        # reverse the order of the rows
+        turtle_view = cell_colors[::-1]
+
         # use list conprehension to divide by 255
         view_msg = Float64MultiArray()
 
         if cell_colors.ndim > 1:
-            flattened = cell_colors.flatten()
+            flattened = turtle_view.flatten()
 
         # Convert the ndarray elements to float and assign to the message data
         flattened = [x/255 for x in flattened]
