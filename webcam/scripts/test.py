@@ -65,14 +65,15 @@ while True:
     # assemble the cells into a 2d array
     cell_colors = np.array(cell_colors)
     cell_colors = cell_colors.reshape((row_num, col_num, 3))
-    #reverse the rows
-    cell_colors = cell_colors[::-1]
-    flattened = cell_colors.flatten()
+    red, green, blue = cell_colors[:, :, 0], cell_colors[:, :, 1], cell_colors[:, :, 2]
+    # reverse the order of the rows
+    turtle_view = blue[1, :].reshape(1, 4)
+    flattened = turtle_view.flatten()
     # use list conprehension to divide by 255
     flattened = [x/255 for x in flattened]
-    # print(flattened)
-    cv2.imshow('view', cell_colors)
-    cv2.imshow('view2', crop)
+    print(flattened)
+    cv2.imshow('view', turtle_view)
+    # cv2.imshow('view2', crop)
     if cv2.waitKey(3) & 0xFF == ord('q'):
         break
 

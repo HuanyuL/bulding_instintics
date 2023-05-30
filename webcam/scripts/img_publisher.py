@@ -42,10 +42,6 @@ class Capture:
                     crop, resize, flattened = self.analyse_frame(frame)
                     crop_msg = self.bridge.cv2_to_imgmsg(crop, "bgr8")
                     resize_msg = self.bridge.cv2_to_imgmsg(resize, "bgr8")
-                    # twist = Twist()
-                    # twist.linear.x = 0.1
-                    # twist.angular.z = msg
-                    # self.vec_pub.publish(twist)
                     self.crop_img.publish(crop_msg)
                     self.resize_img.publish(resize_msg)
                     self.rgb_msg.publish(flattened)
@@ -90,7 +86,7 @@ class Capture:
         mask_combined = cv2.bitwise_or(mask_red, mask_blue)
         mask_combined = cv2.bitwise_or(mask_combined, mask_green)
         
-        filtered_img = cv2.bitwise_and(morph, morph, mask=mask_combined)
+        filtered_img = cv2.bitwise_and(morph, morph, mask=mask_blue)
 
         # get the size of the image
         height, width = frame.shape[0], frame.shape[1]
@@ -120,10 +116,11 @@ class Capture:
         # assemble the cells into a 2d array
         cell_colors = np.array(cell_colors)
         cell_colors = cell_colors.reshape((row_num, col_num, 3))
+        red, green, blue = cell_colors[:, :, 0], cell_colors[:, :, 1], cell_colors[:, :, 2]
 
         # reverse the order of the rows
-        turtle_view = cell_colors[::-1]
-
+        turtle_view = blue[1, :].reshape(1, col_num)
+        flattened = turtle_view.flatten()
         # use list conprehension to divide by 255
         view_msg = Float64MultiArray()
 
