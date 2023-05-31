@@ -24,8 +24,8 @@ while True:
     lower_green = np.array([0, 72, 0])
     upper_green = np.array([240, 255, 39])
 
-    lower_blue = np.array([225, 141, 0])
-    upper_blue = np.array([255, 201, 255])
+    lower_blue = np.array([199, 0, 0])
+    upper_blue = np.array([255, 203, 197])
 
     mask_green = cv2.inRange(morph, lower_green, upper_green)
 
@@ -36,7 +36,7 @@ while True:
     mask_combined = cv2.bitwise_or(mask_red, mask_blue)
     mask_combined = cv2.bitwise_or(mask_combined, mask_green)
     
-    filtered_img = cv2.bitwise_and(morph, morph, mask=mask_combined)
+    filtered_img = cv2.bitwise_and(morph, morph, mask=mask_blue)
     # get the size of the image
     height, width = frame.shape[0], frame.shape[1]
 
@@ -73,6 +73,7 @@ while True:
     flattened = [x/255 for x in flattened]
     print(flattened)
     cv2.imshow('view', turtle_view)
+    cv2.imshow('',crop)
     # cv2.imshow('view2', crop)
     if cv2.waitKey(3) & 0xFF == ord('q'):
         break

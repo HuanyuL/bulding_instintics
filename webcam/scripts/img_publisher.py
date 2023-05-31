@@ -73,8 +73,8 @@ class Capture:
         lower_green = np.array([0, 72, 0])
         upper_green = np.array([240, 255, 39])
 
-        lower_blue = np.array([225, 141, 0])
-        upper_blue = np.array([255, 201, 255])
+        lower_blue = np.array([199, 0, 0])
+        upper_blue = np.array([255, 203, 197])
 
         mask_green = cv2.inRange(morph, lower_green, upper_green)
 
@@ -117,10 +117,10 @@ class Capture:
         # assemble the cells into a 2d array
         cell_colors = np.array(cell_colors)
         cell_colors = cell_colors.reshape((row_num, col_num, 3))
-        red, green, blue = cell_colors[:, :, 0], cell_colors[:, :, 1], cell_colors[:, :, 2]
+        red, green, blue = cell_colors[:, :, 2], cell_colors[:, :, 1], cell_colors[:, :, 0]
 
         # reverse the order of the rows
-        turtle_view = blue[1, :].reshape(1, col_num)
+        turtle_view = blue[1, :].reshape(1, 4)
         flattened = turtle_view.flatten()
         # use list conprehension to divide by 255
         view_msg = Float64MultiArray()
@@ -129,9 +129,10 @@ class Capture:
             flattened = turtle_view.flatten()
 
         # Convert the ndarray elements to float and assign to the message data
-        flattened = [x/255 for x in flattened]
-        flattened.append(1)
-        view_msg.data = [float(value) for value in flattened]
+            flattened = [x/255 for x in flattened]
+            flattened.append(1)
+            view_msg.data = [float(value) for value in flattened]
+            print(view_msg)
 
         return crop, cell_colors, view_msg
 
