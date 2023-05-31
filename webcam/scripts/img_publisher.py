@@ -13,14 +13,13 @@ class Capture:
 
     def __init__(self):
 
-        # self.vec_pub = rospy.Publisher("/cmd_vel_mux/input/teleop",
-        #  Twist, queue_size=1)
         self.crop_img = rospy.Publisher("/crop_rgb", Image, queue_size=1)
         self.img_rgb = rospy.Publisher("img_rgb", Image, queue_size=1)
         self.resize_img = rospy.Publisher("/turtle_view", Image, queue_size=1)
         self.rgb_msg = rospy.Publisher(
             "/view", Float64MultiArray, queue_size=1)
         self.bridge = CvBridge()
+        
         self.cap = cv2.VideoCapture(0)
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 360)
@@ -87,11 +86,13 @@ class Capture:
         mask_combined = cv2.bitwise_or(mask_combined, mask_green)
         
         filtered_img = cv2.bitwise_and(morph, morph, mask=mask_blue)
+        
+        filtered_img[np.where((filtered_img != [0, 0, 0]).all(axis=2))] = [255, 0, 0]
 
         # get the size of the image
         height, width = frame.shape[0], frame.shape[1]
 
-        # crop the image
+        # crop the image and keep the maximum width
         row_num = 2
         col_num = 4
         low_y = 0
@@ -129,6 +130,7 @@ class Capture:
 
         # Convert the ndarray elements to float and assign to the message data
         flattened = [x/255 for x in flattened]
+        flattened.append(1)
         view_msg.data = [float(value) for value in flattened]
 
         return crop, cell_colors, view_msg
